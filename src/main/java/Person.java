@@ -1,12 +1,10 @@
-import java.util.Date;
-
 public class Person {
     private String name;
     private String surname;
     private String patronymic;
-    private Byte age;
+    private int age;
     private boolean sex;
-    private Date birthday;
+    private String birthday;
     private Integer inn;
     private Integer postcode;
     private String country;
@@ -41,11 +39,11 @@ public class Person {
         this.patronymic = patronymic;
     }
 
-    public Byte getAge() {
+    public int getAge() {
         return age;
     }
 
-    public void setAge(Byte age) {
+    public void setAge(int age) {
         this.age = age;
     }
 
@@ -57,11 +55,11 @@ public class Person {
         this.sex = sex;
     }
 
-    public Date getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 
@@ -128,6 +126,7 @@ public class Person {
     public void setAptNumber(Integer aptNumber) {
         this.aptNumber = aptNumber;
     }
+
 //
 //    public Person(String name,
 //                  String surname,
