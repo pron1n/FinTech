@@ -72,7 +72,7 @@ public class Person {
         this.aptNumber = aptNumber;
     }
 
-    public ArrayList<String> getAttributes() {
+    public ArrayList<String> getStringAttributes() {
         ArrayList<String> personAttributes = new ArrayList();
         personAttributes.add(name);
         personAttributes.add(surname);

@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ExcelPeopleTableCreator {
+public class PeopleTableCreator {
     private static Date currentDate = new Date();
     private static ThreadLocalRandom random = ThreadLocalRandom.current();
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -26,18 +26,12 @@ public class ExcelPeopleTableCreator {
         }
     }
 
-    public static int getRandomNumberOfRows() {
-        int numberOfRows = random.nextInt(1, 1000);
-        return numberOfRows;
-
-    }
-
     public static Date getRandomDateOfBirth() {
         Date dateOfBirth = new Date(random.nextLong(1000000000000L));
         return dateOfBirth;
     }
 
-    public static int calculateAgeByDateOfBirth(Date dateOfBirth) {
+    public static int getAgeByDateOfBirth(Date dateOfBirth) {
         int currentYear = currentDate.getYear() + 1900;
         int currentMonth = currentDate.getMonth() + 1;
         int currentDay = currentDate.getDate();
@@ -55,23 +49,20 @@ public class ExcelPeopleTableCreator {
             age = currentYear - birthYear - 1;
             return age;
         }
-        else if (currentMonth == birthMonth) {
+        else {
             if (currentDay >= birthDay) {
                 age = currentYear - birthYear;
                 return age;
             }
-            else if (currentDay < birthDay) {
+            else {
                 age = currentYear - birthYear - 1;
                 return age;
             }
         }
-        return age;
     }
 
     public static String getRandomInn() {
-        String inn = "77";
-        String someCode = Integer.toString(random.nextInt(10000000, 99999999));
-        inn += someCode;
+        String inn = "77" + Integer.toString(random.nextInt(10000000, 99999999));
 
         int firstControlNum = ((7 * Character.getNumericValue(inn.charAt(0)) +
                 2 * Character.getNumericValue(inn.charAt(1)) +
@@ -119,7 +110,7 @@ public class ExcelPeopleTableCreator {
         return randomValue;
     }
 
-    public static Person generateNewRandomPerson() throws IOException {
+    public static Person getRandomPerson() throws IOException {
         Person person = new Person();
 
         Date dateOfBirth = getRandomDateOfBirth();
@@ -138,7 +129,7 @@ public class ExcelPeopleTableCreator {
             person.setPatronymic(getRandomValueFromResourceFile("Female_patronymics.txt"));
         }
         person.setBirthday(simpleDateFormat.format(dateOfBirth));
-        person.setAge(calculateAgeByDateOfBirth(dateOfBirth));
+        person.setAge(getAgeByDateOfBirth(dateOfBirth));
         person.setCountry(getRandomValueFromResourceFile("Countries.txt"));
         person.setRegion(getRandomValueFromResourceFile("Regions.txt"));
         person.setCity(getRandomValueFromResourceFile("Cities.txt"));
@@ -151,13 +142,12 @@ public class ExcelPeopleTableCreator {
         return person;
     }
 
-    public static void mapPersonToTableRow(Person person, HSSFSheet sheet, int rowNum) {
+    public static void addPersonToTableRow(Person person, HSSFSheet sheet, int rowNum) {
         HSSFRow personRow = sheet.createRow(rowNum);
-        ArrayList personAttributes = new ArrayList();
-        personAttributes = person.getAttributes();
+        ArrayList<String> personAttributes = person.getStringAttributes();
         for (int fieldNum = 0; fieldNum < personAttributes.size(); fieldNum++) {
             HSSFCell nextCell = personRow.createCell(fieldNum);
-            nextCell.setCellValue((String) personAttributes.get(fieldNum));
+            nextCell.setCellValue(personAttributes.get(fieldNum));
         }
     }
 
@@ -169,12 +159,12 @@ public class ExcelPeopleTableCreator {
 
         addTitleRow(sheet);
 
-        int numberOfRows = getRandomNumberOfRows();
+        int numberOfRows = random.nextInt(1, 1000);
 
         for (int row = 1; row < numberOfRows; row++) {
             Person randomPerson = new Person();
-            randomPerson = generateNewRandomPerson();
-            mapPersonToTableRow(randomPerson, sheet, row);
+            randomPerson = getRandomPerson();
+            addPersonToTableRow(randomPerson, sheet, row);
         }
 
         wb.write(fos);
