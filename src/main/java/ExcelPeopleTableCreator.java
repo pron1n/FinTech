@@ -33,7 +33,7 @@ public class ExcelPeopleTableCreator {
     }
 
     public static int getRandomNumberOfRows() {
-        int numberOfRows = random.nextInt();
+        int numberOfRows = random.nextInt(1, 1000);
         return numberOfRows;
 
     }
@@ -129,15 +129,16 @@ public class ExcelPeopleTableCreator {
         Person person = new Person();
 
         Date dateOfBirth = getRandomDateOfBirth();
-        Boolean sex = random.nextBoolean();
 
+        String[] sexVariats = {"М", "Ж"};
+        String sex = sexVariats[random.nextInt(2)];
         person.setSex(sex);
 
-        if (sex == true) {
+        if (sex == "М") {
             person.setName(getRandomValueFromResourceFile("Male_names.txt"));
             person.setSurname(getRandomValueFromResourceFile("Male_surnames.txt"));
             person.setPatronymic(getRandomValueFromResourceFile("Male_patronymics.txt"));
-        } else {
+        } else if (sex == "Ж") {
             person.setName(getRandomValueFromResourceFile("Female_names.txt"));
             person.setSurname(getRandomValueFromResourceFile("Female_surnames.txt"));
             person.setPatronymic(getRandomValueFromResourceFile("Female_patronymics.txt"));
@@ -148,7 +149,7 @@ public class ExcelPeopleTableCreator {
         person.setRegion(getRandomValueFromResourceFile("Regions.txt"));
         person.setCity(getRandomValueFromResourceFile("Cities.txt"));
         person.setStreet(getRandomValueFromResourceFile("Streets.txt"));
-        person.setBldNumber(random.nextInt(1,300));
+        person.setBldNumber(random.nextInt(1,200));
         person.setAptNumber(random.nextInt(1, 500));
         person.setPostcode(random.nextInt(100000, 200001));
         person.setInn(getRandomInn());
@@ -173,10 +174,12 @@ public class ExcelPeopleTableCreator {
 
         addTitleRow(sheet);
 
-
         int numberOfRows = getRandomNumberOfRows();
+
         for (int row = 1; row < numberOfRows; row++) {
-            mapPersonToTableRow(generateNewRandomPerson(), sheet, row);
+            Person randomPerson = new Person();
+            randomPerson = generateNewRandomPerson();
+            mapPersonToTableRow(randomPerson, sheet, row);
         }
 
         wb.write(fos);

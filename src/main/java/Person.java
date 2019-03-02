@@ -6,7 +6,7 @@ public class Person {
     private String surname;
     private String patronymic;
     private int age;
-    private boolean sex;
+    private String sex;
     private String birthday;
     private String inn;
     private int postcode;
@@ -50,11 +50,11 @@ public class Person {
         this.age = age;
     }
 
-    public boolean getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(boolean sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 
@@ -130,8 +130,8 @@ public class Person {
         this.aptNumber = aptNumber;
     }
 
-    public ArrayList getAttributes() {
-        ArrayList personAttributes = new ArrayList();
+    public ArrayList<String> getAttributes() {
+        ArrayList<String> personAttributes = new ArrayList();
         personAttributes.add(name);
         personAttributes.add(surname);
         personAttributes.add(patronymic);
