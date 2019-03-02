@@ -5,7 +5,7 @@ public class Person {
     private int age;
     private boolean sex;
     private String birthday;
-    private Integer inn;
+    private String inn;
     private Integer postcode;
     private String country;
     private String region;
@@ -63,11 +63,11 @@ public class Person {
         this.birthday = birthday;
     }
 
-    public Integer getInn() {
+    public String getInn() {
         return inn;
     }
 
-    public void setInn(Integer inn) {
+    public void setInn(String inn) {
         this.inn = inn;
     }
 

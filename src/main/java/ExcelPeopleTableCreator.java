@@ -3,11 +3,11 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ExcelPeopleTableCreator {
@@ -28,7 +28,7 @@ public class ExcelPeopleTableCreator {
         for (PeopleTableField peopleTableField : PeopleTableField.values()) {
             HSSFCell nextTitleCell = titleRow.createCell(currentColumnIndex);
             nextTitleCell.setCellValue(peopleTableField.getField());
-            currentColumnIndex += 1;
+            currentColumnIndex++;
         }
     }
 
@@ -43,7 +43,7 @@ public class ExcelPeopleTableCreator {
         return dateOfBirth;
     }
 
-    public static int calculateAge(Date dateOfBirth) {
+    public static int calculateAgeByDateOfBirth(Date dateOfBirth) {
         int currentYear = currentDate.getYear() + 1900;
         int currentMonth = currentDate.getMonth() + 1;
         int currentDay = currentDate.getDate();
@@ -74,6 +74,57 @@ public class ExcelPeopleTableCreator {
         return age;
     }
 
+    public static String getRandomInn() {
+        String inn = "77";
+        String someCode = Integer.toString(random.nextInt(10000000, 99999999));
+        inn += someCode;
+
+        int firstControlNum = ((7 * Integer.valueOf(inn.charAt(0)) +
+                2 * Integer.valueOf(inn.charAt(1)) +
+                4 * Integer.valueOf(inn.charAt(2)) +
+                10 * Integer.valueOf(inn.charAt(3)) +
+                3 * Integer.valueOf(inn.charAt(4)) +
+                5 * Integer.valueOf(inn.charAt(5)) +
+                9 * Integer.valueOf(inn.charAt(6)) +
+                4 * Integer.valueOf(inn.charAt(7)) +
+                6 * Integer.valueOf(inn.charAt(8)) +
+                8 * Integer.valueOf(inn.charAt(9))) % 11) % 10;
+
+        inn += Integer.toString(firstControlNum);
+
+        int secondControlNum = ((3 * Integer.valueOf(inn.charAt(0)) +
+                7 * Integer.valueOf(inn.charAt(1)) +
+                2 * Integer.valueOf(inn.charAt(2)) +
+                4 * Integer.valueOf(inn.charAt(3)) +
+                10 * Integer.valueOf(inn.charAt(4)) +
+                3 * Integer.valueOf(inn.charAt(5)) +
+                5 * Integer.valueOf(inn.charAt(6)) +
+                9 * Integer.valueOf(inn.charAt(7)) +
+                4 * Integer.valueOf(inn.charAt(8)) +
+                6 * Integer.valueOf(inn.charAt(9)) +
+                8 * Integer.valueOf(inn.charAt(10))) % 11) % 10;
+
+        inn += Integer.toString(secondControlNum);
+
+        return inn;
+    }
+
+    public static String getRandomValueFromResourceFile(String fileName) throws IOException {
+        String randomValue = "";
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("./src/main/resources/" + fileName));
+        String value;
+        List<String> values = new ArrayList<String>();
+        int valueCount = 0;
+        while ((value = bufferedReader.readLine()) != null) {
+            values.add(value);
+            valueCount++;
+        }
+        int randomIndex = random.nextInt(0, valueCount);
+        randomValue = values.get(randomIndex);
+
+        return randomValue;
+    }
+
     public static Person generateNewRandomPerson() { //возможно сделать методом класса Person
         Person person = new Person();
 
@@ -83,9 +134,11 @@ public class ExcelPeopleTableCreator {
         person.setSex(sex);
         //switch (sex)
         person.setBirthday(simpleDateFormat.format(dateOfBirth));
-        person.setAge(calculateAge(dateOfBirth));
-        person.setBldNumber(random.nextInt(300));
-        person.setAptNumber(random.nextInt(500));
+        person.setAge(calculateAgeByDateOfBirth(dateOfBirth));
+        person.setBldNumber(random.nextInt(1,300));
+        person.setAptNumber(random.nextInt(1, 500));
+        person.setPostcode(random.nextInt(100000, 200001));
+        person.setInn(getRandomInn());
 
 
         return person;
@@ -107,14 +160,8 @@ public class ExcelPeopleTableCreator {
         wb.write(fos);
         fos.close();
 
-      //  System.out.println("Файл создан. Путь: " + filePath);
-//      System.out.println(generateNewRandomPerson().getBirthday());
-//      System.out.println("rand:");
-//      System.out.println(random.nextInt(1,10));
-//      Date date = getRandomDateOfBirth();
-//        System.out.println("dateofbirth");
-//        System.out.println(date);
-//        System.out.println("age");
-//      System.out.println(calculateAge(date));
+        //System.out.println("Файл создан. Путь: " + filePath);
+
+        System.out.println(getRandomValueFromResourceFile("Cities.txt"));
     }
 }
