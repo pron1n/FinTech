@@ -12,15 +12,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ExcelPeopleTableCreator {
     private static Date currentDate = new Date();
-
     private static ThreadLocalRandom random = ThreadLocalRandom.current();
-
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
     public static String filePath = new File("PeopleTable.xls").getAbsolutePath();
-
-    public static void createExcelPeopleTableFile() {
-
-    }
 
     public static void addTitleRow(HSSFSheet sheet) {
         HSSFRow titleRow = sheet.createRow(0);
@@ -79,30 +73,30 @@ public class ExcelPeopleTableCreator {
         String someCode = Integer.toString(random.nextInt(10000000, 99999999));
         inn += someCode;
 
-        int firstControlNum = ((7 * Integer.valueOf(inn.charAt(0)) +
-                2 * Integer.valueOf(inn.charAt(1)) +
-                4 * Integer.valueOf(inn.charAt(2)) +
-                10 * Integer.valueOf(inn.charAt(3)) +
-                3 * Integer.valueOf(inn.charAt(4)) +
-                5 * Integer.valueOf(inn.charAt(5)) +
-                9 * Integer.valueOf(inn.charAt(6)) +
-                4 * Integer.valueOf(inn.charAt(7)) +
-                6 * Integer.valueOf(inn.charAt(8)) +
-                8 * Integer.valueOf(inn.charAt(9))) % 11) % 10;
+        int firstControlNum = ((7 * Character.getNumericValue(inn.charAt(0)) +
+                2 * Character.getNumericValue(inn.charAt(1)) +
+                4 * Character.getNumericValue(inn.charAt(2)) +
+                10 * Character.getNumericValue(inn.charAt(3)) +
+                3 * Character.getNumericValue(inn.charAt(4)) +
+                5 * Character.getNumericValue(inn.charAt(5)) +
+                9 * Character.getNumericValue(inn.charAt(6)) +
+                4 * Character.getNumericValue(inn.charAt(7)) +
+                6 * Character.getNumericValue(inn.charAt(8)) +
+                8 * Character.getNumericValue(inn.charAt(9))) % 11) % 10;
 
         inn += Integer.toString(firstControlNum);
 
-        int secondControlNum = ((3 * Integer.valueOf(inn.charAt(0)) +
-                7 * Integer.valueOf(inn.charAt(1)) +
-                2 * Integer.valueOf(inn.charAt(2)) +
-                4 * Integer.valueOf(inn.charAt(3)) +
-                10 * Integer.valueOf(inn.charAt(4)) +
-                3 * Integer.valueOf(inn.charAt(5)) +
-                5 * Integer.valueOf(inn.charAt(6)) +
-                9 * Integer.valueOf(inn.charAt(7)) +
-                4 * Integer.valueOf(inn.charAt(8)) +
-                6 * Integer.valueOf(inn.charAt(9)) +
-                8 * Integer.valueOf(inn.charAt(10))) % 11) % 10;
+        int secondControlNum = ((3 * Character.getNumericValue(inn.charAt(0)) +
+                7 * Character.getNumericValue(inn.charAt(1)) +
+                2 * Character.getNumericValue(inn.charAt(2)) +
+                4 * Character.getNumericValue(inn.charAt(3)) +
+                10 * Character.getNumericValue(inn.charAt(4)) +
+                3 * Character.getNumericValue(inn.charAt(5)) +
+                5 * Character.getNumericValue(inn.charAt(6)) +
+                9 * Character.getNumericValue(inn.charAt(7)) +
+                4 * Character.getNumericValue(inn.charAt(8)) +
+                6 * Character.getNumericValue(inn.charAt(9)) +
+                8 * Character.getNumericValue(inn.charAt(10))) % 11) % 10;
 
         inn += Integer.toString(secondControlNum);
 
@@ -171,6 +165,7 @@ public class ExcelPeopleTableCreator {
         HSSFWorkbook wb = new HSSFWorkbook();
         FileOutputStream fos = new FileOutputStream("PeopleTable.xls");
         HSSFSheet sheet = wb.createSheet("People");
+        sheet.setDefaultColumnWidth(15);
 
         addTitleRow(sheet);
 
