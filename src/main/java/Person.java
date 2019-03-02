@@ -73,7 +73,7 @@ public class Person {
     }
 
     public ArrayList<String> getStringAttributes() {
-        ArrayList<String> personAttributes = new ArrayList();
+        ArrayList<String> personAttributes = new ArrayList<>();
         personAttributes.add(name);
         personAttributes.add(surname);
         personAttributes.add(patronymic);

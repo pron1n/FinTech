@@ -14,9 +14,9 @@ public class PeopleTableCreator {
     private static Date currentDate = new Date();
     private static ThreadLocalRandom random = ThreadLocalRandom.current();
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    public static String filePath = new File("PeopleTable.xls").getAbsolutePath();
+    private static String filePath = new File("PeopleTable.xls").getAbsolutePath();
 
-    public static void addTitleRow(HSSFSheet sheet) {
+    private static void addTitleRow(HSSFSheet sheet) {
         HSSFRow titleRow = sheet.createRow(0);
         int currentColumnIndex = 0;
         for (TableFields tableFields : TableFields.values()) {
@@ -26,12 +26,7 @@ public class PeopleTableCreator {
         }
     }
 
-    public static Date getRandomDateOfBirth() {
-        Date dateOfBirth = new Date(random.nextLong(1000000000000L));
-        return dateOfBirth;
-    }
-
-    public static int getAgeByDateOfBirth(Date dateOfBirth) {
+    private static int getAgeByDateOfBirth(Date dateOfBirth) {
         int currentYear = currentDate.getYear() + 1900;
         int currentMonth = currentDate.getMonth() + 1;
         int currentDay = currentDate.getDate();
@@ -61,7 +56,7 @@ public class PeopleTableCreator {
         }
     }
 
-    public static String getRandomInn() {
+    private static String getRandomInn() {
         String inn = "77" + Integer.toString(random.nextInt(10000000, 99999999));
 
         int firstControlNum = ((7 * Character.getNumericValue(inn.charAt(0)) +
@@ -94,7 +89,7 @@ public class PeopleTableCreator {
         return inn;
     }
 
-    public static String getRandomValueFromResourceFile(String fileName) throws IOException {
+    private static String getRandomValueFromResourceFile(String fileName) throws IOException {
         String randomValue = "";
         BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/" + fileName));
         String value;
@@ -110,20 +105,20 @@ public class PeopleTableCreator {
         return randomValue;
     }
 
-    public static Person getRandomPerson() throws IOException {
+    private static Person getRandomPerson() throws IOException {
         Person person = new Person();
 
-        Date dateOfBirth = getRandomDateOfBirth();
+        Date dateOfBirth = new Date(random.nextLong(1000000000000L));
 
         String[] sexVariats = {"М", "Ж"};
         String sex = sexVariats[random.nextInt(2)];
         person.setSex(sex);
 
-        if (sex == "М") {
+        if (sex.equals("М")) {
             person.setName(getRandomValueFromResourceFile("Male_names.txt"));
             person.setSurname(getRandomValueFromResourceFile("Male_surnames.txt"));
             person.setPatronymic(getRandomValueFromResourceFile("Male_patronymics.txt"));
-        } else if (sex == "Ж") {
+        } else if (sex.equals("Ж")) {
             person.setName(getRandomValueFromResourceFile("Female_names.txt"));
             person.setSurname(getRandomValueFromResourceFile("Female_surnames.txt"));
             person.setPatronymic(getRandomValueFromResourceFile("Female_patronymics.txt"));
@@ -135,14 +130,14 @@ public class PeopleTableCreator {
         person.setCity(getRandomValueFromResourceFile("Cities.txt"));
         person.setStreet(getRandomValueFromResourceFile("Streets.txt"));
         person.setBldNumber(random.nextInt(1,200));
-        person.setAptNumber(random.nextInt(1, 500));
+        person.setAptNumber(random.nextInt(1, 200));
         person.setPostcode(random.nextInt(100000, 200001));
         person.setInn(getRandomInn());
 
         return person;
     }
 
-    public static void addPersonToTableRow(Person person, HSSFSheet sheet, int rowNum) {
+    private static void addPersonToTableRow(Person person, HSSFSheet sheet, int rowNum) {
         HSSFRow personRow = sheet.createRow(rowNum);
         ArrayList<String> personAttributes = person.getStringAttributes();
         for (int fieldNum = 0; fieldNum < personAttributes.size(); fieldNum++) {
@@ -159,13 +154,10 @@ public class PeopleTableCreator {
 
         addTitleRow(sheet);
 
-        int numberOfRows = random.nextInt(1, 1000);
+        int numberOfRows = random.nextInt(1, 31);
 
-        for (int row = 1; row < numberOfRows; row++) {
-            Person randomPerson = new Person();
-            randomPerson = getRandomPerson();
-            addPersonToTableRow(randomPerson, sheet, row);
-        }
+        for (int row = 1; row <= numberOfRows; row++)
+            addPersonToTableRow(getRandomPerson(), sheet, row);
 
         wb.write(fos);
         fos.close();
