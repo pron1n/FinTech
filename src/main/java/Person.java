@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+
+
 public class Person {
     private String name;
     private String surname;
@@ -127,40 +130,23 @@ public class Person {
         this.aptNumber = aptNumber;
     }
 
-//
-//    public Person(String name,
-//                  String surname,
-//                  String patronymic,
-//                  Byte age,
-//                  boolean sex,
-//                  Date birthday,
-//                  Integer inn,
-//                  Integer postcode,
-//                  String country,
-//                  String region,
-//                  String city,
-//                  String street,
-//                  Integer bldNumber,
-//                  Integer aptNumber)
-//    {
-//        this.name = name;
-//        this.surname = surname;
-//        this.patronymic = patronymic;
-//        this.age = age;
-//        this.sex = sex;
-//        this.birthday = birthday;
-//        this.inn = inn;
-//        this.postcode = postcode;
-//        this.country = country;
-//        this.region = region;
-//        this.city = city;
-//        this.street = street;
-//        this.bldNumber = bldNumber;
-//        this.aptNumber = aptNumber;
-//    }
+    public ArrayList getAttributes() {
+        ArrayList personAttributes = new ArrayList();
+        personAttributes.add(name);
+        personAttributes.add(surname);
+        personAttributes.add(patronymic);
+        personAttributes.add(Integer.toString(age));
+        personAttributes.add(sex);
+        personAttributes.add(birthday);
+        personAttributes.add(inn);
+        personAttributes.add(Integer.toString(postcode));
+        personAttributes.add(country);
+        personAttributes.add(region);
+        personAttributes.add(city);
+        personAttributes.add(street);
+        personAttributes.add(Integer.toString(bldNumber));
+        personAttributes.add(Integer.toString(aptNumber));
 
-
-
-
-
+        return personAttributes;
+    }
 }

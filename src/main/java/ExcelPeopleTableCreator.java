@@ -16,7 +16,7 @@ public class ExcelPeopleTableCreator {
     private static ThreadLocalRandom random = ThreadLocalRandom.current();
 
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    public static String filePath = new File("").getAbsolutePath();
+    public static String filePath = new File("PeopleTable.xls").getAbsolutePath();
 
     public static void createExcelPeopleTableFile() {
 
@@ -32,7 +32,7 @@ public class ExcelPeopleTableCreator {
         }
     }
 
-    public static int getNumberOfRows() {
+    public static int getRandomNumberOfRows() {
         int numberOfRows = random.nextInt();
         return numberOfRows;
 
@@ -111,11 +111,11 @@ public class ExcelPeopleTableCreator {
 
     public static String getRandomValueFromResourceFile(String fileName) throws IOException {
         String randomValue = "";
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("./src/main/resources/" + fileName));
+        BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/" + fileName));
         String value;
         List<String> values = new ArrayList<String>();
         int valueCount = 0;
-        while ((value = bufferedReader.readLine()) != null) {
+        while ((value = br.readLine()) != null) {
             values.add(value);
             valueCount++;
         }
@@ -156,8 +156,14 @@ public class ExcelPeopleTableCreator {
         return person;
     }
 
-    public void mapPersonToTableFields() {
-
+    public static void mapPersonToTableRow(Person person, HSSFSheet sheet, int rowNum) {
+        HSSFRow personRow = sheet.createRow(rowNum);
+        ArrayList personAttributes = new ArrayList();
+        personAttributes = person.getAttributes();
+        for (int fieldNum = 0; fieldNum < personAttributes.size(); fieldNum++) {
+            HSSFCell nextCell = personRow.createCell(fieldNum);
+            nextCell.setCellValue((String) personAttributes.get(fieldNum));
+        }
     }
 
     public static void main(String[] args) throws IOException {
@@ -167,10 +173,15 @@ public class ExcelPeopleTableCreator {
 
         addTitleRow(sheet);
 
+
+        int numberOfRows = getRandomNumberOfRows();
+        for (int row = 1; row < numberOfRows; row++) {
+            mapPersonToTableRow(generateNewRandomPerson(), sheet, row);
+        }
+
         wb.write(fos);
         fos.close();
 
-        System.out.println("Файл создан. Путь: " + filePath + "/PeopleTable.xls");
-
+        System.out.println("Файл создан. Путь: " + filePath);
     }
 }
