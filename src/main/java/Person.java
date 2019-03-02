@@ -6,13 +6,13 @@ public class Person {
     private boolean sex;
     private String birthday;
     private String inn;
-    private Integer postcode;
+    private int postcode;
     private String country;
     private String region;
     private String city;
     private String street;
-    private Integer bldNumber;
-    private Integer aptNumber;
+    private int bldNumber;
+    private int aptNumber;
 
 
     public String getName() {
@@ -71,7 +71,7 @@ public class Person {
         this.inn = inn;
     }
 
-    public Integer getPostcode() {
+    public int getPostcode() {
         return postcode;
     }
 
@@ -111,19 +111,19 @@ public class Person {
         this.street = street;
     }
 
-    public Integer getBldNumber() {
+    public int getBldNumber() {
         return bldNumber;
     }
 
-    public void setBldNumber(Integer bldNumber) {
+    public void setBldNumber(int bldNumber) {
         this.bldNumber = bldNumber;
     }
 
-    public Integer getAptNumber() {
+    public int getAptNumber() {
         return aptNumber;
     }
 
-    public void setAptNumber(Integer aptNumber) {
+    public void setAptNumber(int aptNumber) {
         this.aptNumber = aptNumber;
     }
 

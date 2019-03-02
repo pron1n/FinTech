@@ -16,7 +16,7 @@ public class ExcelPeopleTableCreator {
     private static ThreadLocalRandom random = ThreadLocalRandom.current();
 
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    //public static String filePath = new File(".").getAbsolutePath();
+    public static String filePath = new File("").getAbsolutePath();
 
     public static void createExcelPeopleTableFile() {
 
@@ -25,9 +25,9 @@ public class ExcelPeopleTableCreator {
     public static void addTitleRow(HSSFSheet sheet) {
         HSSFRow titleRow = sheet.createRow(0);
         int currentColumnIndex = 0;
-        for (PeopleTableField peopleTableField : PeopleTableField.values()) {
+        for (TableFields tableFields : TableFields.values()) {
             HSSFCell nextTitleCell = titleRow.createCell(currentColumnIndex);
-            nextTitleCell.setCellValue(peopleTableField.getField());
+            nextTitleCell.setCellValue(tableFields.getField());
             currentColumnIndex++;
         }
     }
@@ -125,21 +125,33 @@ public class ExcelPeopleTableCreator {
         return randomValue;
     }
 
-    public static Person generateNewRandomPerson() { //возможно сделать методом класса Person
+    public static Person generateNewRandomPerson() throws IOException {
         Person person = new Person();
 
         Date dateOfBirth = getRandomDateOfBirth();
         Boolean sex = random.nextBoolean();
 
         person.setSex(sex);
-        //switch (sex)
+
+        if (sex == true) {
+            person.setName(getRandomValueFromResourceFile("Male_names.txt"));
+            person.setSurname(getRandomValueFromResourceFile("Male_surnames.txt"));
+            person.setPatronymic(getRandomValueFromResourceFile("Male_patronymics.txt"));
+        } else {
+            person.setName(getRandomValueFromResourceFile("Female_names.txt"));
+            person.setSurname(getRandomValueFromResourceFile("Female_surnames.txt"));
+            person.setPatronymic(getRandomValueFromResourceFile("Female_patronymics.txt"));
+        }
         person.setBirthday(simpleDateFormat.format(dateOfBirth));
         person.setAge(calculateAgeByDateOfBirth(dateOfBirth));
+        person.setCountry(getRandomValueFromResourceFile("Countries.txt"));
+        person.setRegion(getRandomValueFromResourceFile("Regions.txt"));
+        person.setCity(getRandomValueFromResourceFile("Cities.txt"));
+        person.setStreet(getRandomValueFromResourceFile("Streets.txt"));
         person.setBldNumber(random.nextInt(1,300));
         person.setAptNumber(random.nextInt(1, 500));
         person.setPostcode(random.nextInt(100000, 200001));
         person.setInn(getRandomInn());
-
 
         return person;
     }
@@ -155,13 +167,10 @@ public class ExcelPeopleTableCreator {
 
         addTitleRow(sheet);
 
-
-
         wb.write(fos);
         fos.close();
 
-        //System.out.println("Файл создан. Путь: " + filePath);
+        System.out.println("Файл создан. Путь: " + filePath + "/PeopleTable.xls");
 
-        System.out.println(getRandomValueFromResourceFile("Cities.txt"));
     }
 }

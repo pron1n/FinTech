@@ -1,4 +1,4 @@
-public enum PeopleTableField {
+public enum TableFields {
     NAME("ИМЯ"),
     SURNAME("ФАМИЛИЯ"),
     PATRONYMIC("ОТЧЕСТВО"),
@@ -16,7 +16,7 @@ public enum PeopleTableField {
 
     private String field;
 
-    PeopleTableField(String field) {
+    TableFields(String field) {
         this.field = field;
     }
 
