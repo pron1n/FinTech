@@ -1,3 +1,7 @@
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -10,21 +14,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class PeopleTableCreator {
+public class PeopleTableFilesCreator {
     private static Date currentDate = new Date();
     private static ThreadLocalRandom random = ThreadLocalRandom.current();
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    private static String filePath = new File("PeopleTable.xls").getAbsolutePath();
-
-    private static void addTitleRow(HSSFSheet sheet) {
-        HSSFRow titleRow = sheet.createRow(0);
-        int currentColumnIndex = 0;
-        for (TableFields tableFields : TableFields.values()) {
-            HSSFCell nextTitleCell = titleRow.createCell(currentColumnIndex);
-            nextTitleCell.setCellValue(tableFields.getField());
-            currentColumnIndex++;
-        }
-    }
+    private static String excelFilePath = new File("PeopleTable.xls").getAbsolutePath();
+    private static String pdfFilePath = new File("PeopleTable.pdf").getAbsolutePath();
 
     private static int getAgeByDateOfBirth(Date dateOfBirth) {
         int currentYear = currentDate.getYear() + 1900;
@@ -93,7 +88,7 @@ public class PeopleTableCreator {
         String randomValue = "";
         BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/" + fileName));
         String value;
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         int valueCount = 0;
         while ((value = br.readLine()) != null) {
             values.add(value);
@@ -129,7 +124,7 @@ public class PeopleTableCreator {
         person.setRegion(getRandomValueFromResourceFile("Regions.txt"));
         person.setCity(getRandomValueFromResourceFile("Cities.txt"));
         person.setStreet(getRandomValueFromResourceFile("Streets.txt"));
-        person.setBldNumber(random.nextInt(1,200));
+        person.setBldNumber(random.nextInt(1,100));
         person.setAptNumber(random.nextInt(1, 200));
         person.setPostcode(random.nextInt(100000, 200001));
         person.setInn(getRandomInn());
@@ -137,7 +132,7 @@ public class PeopleTableCreator {
         return person;
     }
 
-    private static void addPersonToTableRow(Person person, HSSFSheet sheet, int rowNum) {
+    private static void addPersonToExcelTableRow(Person person, HSSFSheet sheet, int rowNum) {
         HSSFRow personRow = sheet.createRow(rowNum);
         ArrayList<String> personAttributes = person.getStringAttributes();
         for (int fieldNum = 0; fieldNum < personAttributes.size(); fieldNum++) {
@@ -146,22 +141,64 @@ public class PeopleTableCreator {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    private static void addPersonToPdfTableRow(Person person, PdfPTable pdfTable) {
+        ArrayList<String> personAttributes = person.getStringAttributes();
+        for (int fieldNum = 0; fieldNum < personAttributes.size(); fieldNum++) {
+            pdfTable.addCell(personAttributes.get(fieldNum));
+        }
+    }
+
+    private static void addExcelTableTitleRow(HSSFSheet sheet) {
+        HSSFRow titleRow = sheet.createRow(0);
+        int currentColumnIndex = 0;
+        for (TableFields tableFields : TableFields.values()) {
+            HSSFCell nextTitleCell = titleRow.createCell(currentColumnIndex);
+            nextTitleCell.setCellValue(tableFields.getField());
+            currentColumnIndex++;
+        }
+    }
+
+    private static void addPdfTableTitleRow(PdfPTable pdfTable) {
+        for (TableFields tableFields : TableFields.values()) {
+            pdfTable.addCell(tableFields.getField());
+        }
+        PdfPCell[] rowCells = pdfTable.getRow(0).getCells();
+        for (int i = 0; i < rowCells.length; i++) {
+            rowCells[i].setBackgroundColor(BaseColor.GRAY);
+        }
+    }
+
+
+    public static void main(String[] args) throws IOException, DocumentException {
         HSSFWorkbook wb = new HSSFWorkbook();
         FileOutputStream fos = new FileOutputStream("PeopleTable.xls");
         HSSFSheet sheet = wb.createSheet("People");
         sheet.setDefaultColumnWidth(15);
+        addExcelTableTitleRow(sheet);
 
-        addTitleRow(sheet);
+        Document document = new Document();
+        PdfPTable pdfTable = new PdfPTable(13);
+        pdfTable.setWidthPercentage(100);
+        addPdfTableTitleRow(pdfTable);
+        addPersonToPdfTableRow(getRandomPerson(), pdfTable);
 
         int numberOfRows = random.nextInt(1, 31);
 
-        for (int row = 1; row <= numberOfRows; row++)
-            addPersonToTableRow(getRandomPerson(), sheet, row);
+        for (int row = 1; row <= numberOfRows; row++) {
+            Person randomPerson = getRandomPerson();
+            addPersonToExcelTableRow(randomPerson, sheet, row);
+            addPersonToPdfTableRow(randomPerson, pdfTable);
+        }
+
+        PdfWriter.getInstance(document, new FileOutputStream("PeopleTable.pdf"));
+        document.open();
+        document.add(pdfTable);
 
         wb.write(fos);
         fos.close();
+        document.close();
 
-        System.out.println("Файл создан. Путь: " + filePath);
+        System.out.println("Файл создан. Путь: " + excelFilePath);
+        System.out.println("Файл создан. Путь: " + pdfFilePath);
     }
 }
