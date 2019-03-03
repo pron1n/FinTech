@@ -1,9 +1,9 @@
 package files_creator;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -16,8 +16,7 @@ public class PeopleTableFilesCreator {
     private static Date currentDate = new Date();
     private static ThreadLocalRandom random = ThreadLocalRandom.current();
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    private static String excelFilePath = new File("PeopleTable.xls").getAbsolutePath();
-    private static String pdfFilePath = new File("PeopleTable.pdf").getAbsolutePath();
+    private static String excelFilePath = new File("PeopleTable.xlsx").getAbsolutePath();
 
     private static String getRandomValueFromResourceFile(String fileName) throws IOException {
         String randomValue = "";
@@ -130,29 +129,29 @@ public class PeopleTableFilesCreator {
         return inn;
     }
 
-    private static void addExcelTableTitleRow(HSSFSheet sheet) {
-        HSSFRow titleRow = sheet.createRow(0);
+    private static void addExcelTableTitleRow(XSSFSheet sheet) {
+        XSSFRow titleRow = sheet.createRow(0);
         int currentColumnIndex = 0;
         for (TableFields tableFields : TableFields.values()) {
-            HSSFCell nextTitleCell = titleRow.createCell(currentColumnIndex);
+            XSSFCell nextTitleCell = titleRow.createCell(currentColumnIndex);
             nextTitleCell.setCellValue(tableFields.getField());
             currentColumnIndex++;
         }
     }
 
-    private static void addPersonToExcelTableRow(Person person, HSSFSheet sheet, int rowNum) {
-        HSSFRow personRow = sheet.createRow(rowNum);
+    private static void addPersonToExcelTableRow(Person person, XSSFSheet sheet, int rowNum) {
+        XSSFRow personRow = sheet.createRow(rowNum);
         ArrayList<String> personAttributes = person.getStringAttributes();
         for (int fieldNum = 0; fieldNum < personAttributes.size(); fieldNum++) {
-            HSSFCell nextCell = personRow.createCell(fieldNum);
+            XSSFCell nextCell = personRow.createCell(fieldNum);
             nextCell.setCellValue(personAttributes.get(fieldNum));
         }
     }
 
     public static void main(String[] args) throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        FileOutputStream fos = new FileOutputStream("PeopleTable.xls");
-        HSSFSheet sheet = wb.createSheet("People");
+        XSSFWorkbook wb = new XSSFWorkbook();
+        FileOutputStream fos = new FileOutputStream("PeopleTable.xlsx");
+        XSSFSheet sheet = wb.createSheet("People");
         sheet.setDefaultColumnWidth(15);
         addExcelTableTitleRow(sheet);
 
