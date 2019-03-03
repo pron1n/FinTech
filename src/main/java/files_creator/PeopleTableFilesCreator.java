@@ -2,6 +2,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -167,7 +168,6 @@ public class PeopleTableFilesCreator {
             rowCells[i].setBackgroundColor(BaseColor.GRAY);
         }
     }
-
 
     public static void main(String[] args) throws IOException, DocumentException {
         HSSFWorkbook wb = new HSSFWorkbook();
