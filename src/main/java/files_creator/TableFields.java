@@ -1,3 +1,5 @@
+package files_creator;
+
 public enum TableFields {
     NAME("ИМЯ"),
     SURNAME("ФАМИЛИЯ"),
