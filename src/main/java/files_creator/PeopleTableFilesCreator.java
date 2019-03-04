@@ -1,5 +1,8 @@
 package files_creator;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -146,6 +149,20 @@ public class PeopleTableFilesCreator {
             XSSFCell nextCell = personRow.createCell(fieldNum);
             nextCell.setCellValue(personAttributes.get(fieldNum));
         }
+    }
+
+    private static String getResponseBody(String url, String param, String paramValue) throws IOException {
+        OkHttpClient okHttpClient = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(url + "?" + param + "=" + paramValue)
+                .get()
+                .build();
+
+        Response response = okHttpClient.newCall(request).execute();
+
+        return response.body().toString();
+
     }
 
     public static void main(String[] args) throws IOException {
