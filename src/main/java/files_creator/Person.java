@@ -104,43 +104,43 @@ public class Person {
     }
 
     public void setNameByGender(String gender) throws IOException {
-        if (gender == "М" || gender == "male")
+        if (gender.equals("М") || gender.equals("male"))
             this.setName(FileOperator.getRandomValueFromResourceFile("Male_names.txt"));
         else
             this.setName(FileOperator.getRandomValueFromResourceFile("Female_names.txt"));
     }
 
     public void setSurameByGender(String gender) throws IOException {
-        if (gender == "М" || gender == "male")
+        if (gender.equals("М") || gender.equals("male"))
             this.setSurname(FileOperator.getRandomValueFromResourceFile("Male_surnames.txt"));
         else
             this.setSurname(FileOperator.getRandomValueFromResourceFile("Female_surnames.txt"));
     }
 
     public void setPatronymicByGender(String gender) throws IOException {
-        if (gender == "М" || gender == "male")
+        if (gender.equals("М") || gender.equals("male"))
             this.setPatronymic(FileOperator.getRandomValueFromResourceFile("Male_patronymics.txt"));
         else
             this.setPatronymic(FileOperator.getRandomValueFromResourceFile("Female_patronymics.txt"));
     }
 
-    public Person getPersonByWebApiPerson(PersonFromWebApi personFromWebApi) throws IOException {
-        if (personFromWebApi.getGender() == "male")
+    public Person getPersonByWebApiUser(WebApiUser webApiUser) throws IOException {
+        if (webApiUser.getGender().equals("male"))
             this.setGender("М");
         else
             this.setGender("Ж");
 
-        this.setName(personFromWebApi.getName().getFirst());
-        this.setSurname(personFromWebApi.getName().getLast());
+        this.setName(webApiUser.getName().getFirst());
+        this.setSurname(webApiUser.getName().getLast());
         this.setPatronymicByGender(this.gender);
-        this.setAge(personFromWebApi.getDob().getAge());
-        this.setDateOfBirth(personFromWebApi.getDob().getDate());
+        this.setAge(webApiUser.getDob().getAge());
+        this.setDateOfBirth(webApiUser.getDob().getDate());
         this.setInn(new Inn().getRandomInn());
         this.setPostcode(random.nextInt(100000, 200001));
-        this.setCountry(personFromWebApi.getNat());
-        this.setRegion(personFromWebApi.getLocation().getState());
-        this.setCity(personFromWebApi.getLocation().getCity());
-        this.setStreet(personFromWebApi.getLocation().getStreet());
+        this.setCountry(webApiUser.getNat());
+        this.setRegion(webApiUser.getLocation().getState());
+        this.setCity(webApiUser.getLocation().getCity());
+        this.setStreet(webApiUser.getLocation().getStreet());
         this.setBldNumber(random.nextInt(1, 100));
         this.setAptNumber(random.nextInt(1, 200));
 

@@ -104,18 +104,22 @@ public class PeopleTableFilesCreator {
                 .get()
                 .build();
 
-        Response response = okHttpClient.newCall(request).execute();
-
-        return response.body().string();
-
+        try (Response response = okHttpClient.newCall(request).execute()) {
+            return response.body().string();
+        } catch (Exception e) {
+            return "\nНе удалось получить ответ от randomuser.me";
+        }
     }
 
-    private static PersonFromWebApi getUserFromWebApi(String userJson) {
+    private static WebApiUser getWebApiUser(String userJson) {
         Gson gson = new Gson();
-        PersonFromWebApi personFromWebApi = gson.fromJson(userJson
-                .substring(userJson.indexOf("[") + 1, userJson.indexOf("]")), PersonFromWebApi.class);
-
-        return personFromWebApi;
+        try {
+            WebApiUser webApiUser = gson.fromJson(userJson
+                .substring(userJson.indexOf("[") + 1, userJson.indexOf("]")), WebApiUser.class);
+            return webApiUser;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static void main(String[] args) throws IOException {
@@ -128,8 +132,17 @@ public class PeopleTableFilesCreator {
         int numberOfRows = random.nextInt(1, 31);
 
         for (int row = 1; row <= numberOfRows; row++) {
-            Person randomPerson = getRandomPersonOffline();
-            addPersonToExcelTableRow(randomPerson, sheet, row);
+            try {
+                String jsonUser = getRandomUserJsonString();
+                Person randomPerson = new Person();
+                randomPerson.getPersonByWebApiUser(getWebApiUser(jsonUser));
+                addPersonToExcelTableRow(randomPerson, sheet, row);
+            } catch (Exception e) {
+                Person randomPerson = getRandomPersonOffline();
+                addPersonToExcelTableRow(randomPerson, sheet, row);
+                System.out.println("Не удалось получить пользователя от randomuser.me\n" +
+                        "Пользователь в строке " + row + " сгенерен с использованием локальных ресурсов");
+            }
         }
 
         wb.write(fos);
@@ -138,7 +151,7 @@ public class PeopleTableFilesCreator {
 
         String jsonUser = getRandomUserJsonString();
         System.out.println(jsonUser);
-        System.out.println(new Person().getPersonByWebApiPerson(getUserFromWebApi(jsonUser))
+        System.out.println(new Person().getPersonByWebApiUser(getWebApiUser(jsonUser))
                 .getStringAttributes());
 
 
