@@ -1,5 +1,6 @@
 package files_creator;
 
+import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -12,7 +13,6 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PeopleTableFilesCreator {
@@ -21,50 +21,28 @@ public class PeopleTableFilesCreator {
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
     private static String excelFilePath = new File("PeopleTable.xlsx").getAbsolutePath();
 
-    private static String getRandomValueFromResourceFile(String fileName) throws IOException {
-        String randomValue = "";
-        BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/" + fileName));
-        String value;
-        List<String> values = new ArrayList<>();
-        int valueCount = 0;
-        while ((value = br.readLine()) != null) {
-            values.add(value);
-            valueCount++;
-        }
-        int randomIndex = random.nextInt(0, valueCount);
-        randomValue = values.get(randomIndex);
-
-        return randomValue;
-    }
-
-    private static Person getRandomPerson() throws IOException {
+    private static Person getRandomPersonOffline() throws IOException {
         Person person = new Person();
 
         Date dateOfBirth = new Date(random.nextLong(1000000000000L));
 
-        String[] sexVariats = {"М", "Ж"};
-        String sex = sexVariats[random.nextInt(2)];
-        person.setSex(sex);
+        String[] genderVariats = {"М", "Ж"};
+        String gender = genderVariats[random.nextInt(2)];
+        person.setGender(gender);
 
-        if (sex.equals("М")) {
-            person.setName(getRandomValueFromResourceFile("Male_names.txt"));
-            person.setSurname(getRandomValueFromResourceFile("Male_surnames.txt"));
-            person.setPatronymic(getRandomValueFromResourceFile("Male_patronymics.txt"));
-        } else if (sex.equals("Ж")) {
-            person.setName(getRandomValueFromResourceFile("Female_names.txt"));
-            person.setSurname(getRandomValueFromResourceFile("Female_surnames.txt"));
-            person.setPatronymic(getRandomValueFromResourceFile("Female_patronymics.txt"));
-        }
-        person.setBirthday(simpleDateFormat.format(dateOfBirth));
+        person.setNameByGender(person.getGender());
+        person.setSurameByGender(person.getGender());
+        person.setPatronymicByGender(person.getGender());
+        person.setDateOfBirth(simpleDateFormat.format(dateOfBirth));
         person.setAge(getAgeByDateOfBirth(dateOfBirth));
-        person.setCountry(getRandomValueFromResourceFile("Countries.txt"));
-        person.setRegion(getRandomValueFromResourceFile("Regions.txt"));
-        person.setCity(getRandomValueFromResourceFile("Cities.txt"));
-        person.setStreet(getRandomValueFromResourceFile("Streets.txt"));
+        person.setCountry(FileOperator.getRandomValueFromResourceFile("Countries.txt"));
+        person.setRegion(FileOperator.getRandomValueFromResourceFile("Regions.txt"));
+        person.setCity(FileOperator.getRandomValueFromResourceFile("Cities.txt"));
+        person.setStreet(FileOperator.getRandomValueFromResourceFile("Streets.txt"));
         person.setBldNumber(random.nextInt(1,100));
         person.setAptNumber(random.nextInt(1, 200));
         person.setPostcode(random.nextInt(100000, 200001));
-        person.setInn(getRandomInn());
+        person.setInn(new Inn().getRandomInn());
 
         return person;
     }
@@ -99,39 +77,6 @@ public class PeopleTableFilesCreator {
         }
     }
 
-    private static String getRandomInn() {
-        String inn = "77" + Integer.toString(random.nextInt(10000000, 99999999));
-
-        int firstControlNum = ((7 * Character.getNumericValue(inn.charAt(0)) +
-                2 * Character.getNumericValue(inn.charAt(1)) +
-                4 * Character.getNumericValue(inn.charAt(2)) +
-                10 * Character.getNumericValue(inn.charAt(3)) +
-                3 * Character.getNumericValue(inn.charAt(4)) +
-                5 * Character.getNumericValue(inn.charAt(5)) +
-                9 * Character.getNumericValue(inn.charAt(6)) +
-                4 * Character.getNumericValue(inn.charAt(7)) +
-                6 * Character.getNumericValue(inn.charAt(8)) +
-                8 * Character.getNumericValue(inn.charAt(9))) % 11) % 10;
-
-        inn += Integer.toString(firstControlNum);
-
-        int secondControlNum = ((3 * Character.getNumericValue(inn.charAt(0)) +
-                7 * Character.getNumericValue(inn.charAt(1)) +
-                2 * Character.getNumericValue(inn.charAt(2)) +
-                4 * Character.getNumericValue(inn.charAt(3)) +
-                10 * Character.getNumericValue(inn.charAt(4)) +
-                3 * Character.getNumericValue(inn.charAt(5)) +
-                5 * Character.getNumericValue(inn.charAt(6)) +
-                9 * Character.getNumericValue(inn.charAt(7)) +
-                4 * Character.getNumericValue(inn.charAt(8)) +
-                6 * Character.getNumericValue(inn.charAt(9)) +
-                8 * Character.getNumericValue(inn.charAt(10))) % 11) % 10;
-
-        inn += Integer.toString(secondControlNum);
-
-        return inn;
-    }
-
     private static void addExcelTableTitleRow(XSSFSheet sheet) {
         XSSFRow titleRow = sheet.createRow(0);
         int currentColumnIndex = 0;
@@ -151,18 +96,26 @@ public class PeopleTableFilesCreator {
         }
     }
 
-    private static String getResponseBody(String url, String param, String paramValue) throws IOException {
+    private static String getRandomUserJsonString() throws IOException {
         OkHttpClient okHttpClient = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url(url + "?" + param + "=" + paramValue)
+                .url("https://randomuser.me/api/?inc=gender,name,location,dob,nat")
                 .get()
                 .build();
 
         Response response = okHttpClient.newCall(request).execute();
 
-        return response.body().toString();
+        return response.body().string();
 
+    }
+
+    private static PersonFromWebApi getUserFromWebApi(String userJson) {
+        Gson gson = new Gson();
+        PersonFromWebApi personFromWebApi = gson.fromJson(userJson
+                .substring(userJson.indexOf("[") + 1, userJson.indexOf("]")), PersonFromWebApi.class);
+
+        return personFromWebApi;
     }
 
     public static void main(String[] args) throws IOException {
@@ -175,12 +128,19 @@ public class PeopleTableFilesCreator {
         int numberOfRows = random.nextInt(1, 31);
 
         for (int row = 1; row <= numberOfRows; row++) {
-            Person randomPerson = getRandomPerson();
+            Person randomPerson = getRandomPersonOffline();
             addPersonToExcelTableRow(randomPerson, sheet, row);
         }
 
         wb.write(fos);
         fos.close();
+
+
+        String jsonUser = getRandomUserJsonString();
+        System.out.println(jsonUser);
+        System.out.println(new Person().getPersonByWebApiPerson(getUserFromWebApi(jsonUser))
+                .getStringAttributes());
+
 
         System.out.println("Файл создан. Путь: " + excelFilePath);
     }

@@ -1,14 +1,16 @@
 package files_creator;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Person {
     private String name;
     private String surname;
     private String patronymic;
     private int age;
-    private String sex;
-    private String birthday;
+    private String gender;
+    private String dateOfBirth;
     private String inn;
     private int postcode;
     private String country;
@@ -17,6 +19,13 @@ public class Person {
     private String street;
     private int bldNumber;
     private int aptNumber;
+
+    private static ThreadLocalRandom random = ThreadLocalRandom.current();
+
+    public String getGender() {
+        return gender;
+    }
+
 
     public void setName(String name) {
         this.name = name;
@@ -34,12 +43,12 @@ public class Person {
         this.age = age;
     }
 
-    public void setSex(String sex) {
-        this.sex = sex;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public void setInn(String inn) {
@@ -80,8 +89,8 @@ public class Person {
         personAttributes.add(surname);
         personAttributes.add(patronymic);
         personAttributes.add(Integer.toString(age));
-        personAttributes.add(sex);
-        personAttributes.add(birthday);
+        personAttributes.add(gender);
+        personAttributes.add(dateOfBirth);
         personAttributes.add(inn);
         personAttributes.add(Integer.toString(postcode));
         personAttributes.add(country);
@@ -92,5 +101,49 @@ public class Person {
         personAttributes.add(Integer.toString(aptNumber));
 
         return personAttributes;
+    }
+
+    public void setNameByGender(String gender) throws IOException {
+        if (gender == "М" || gender == "male")
+            this.setName(FileOperator.getRandomValueFromResourceFile("Male_names.txt"));
+        else
+            this.setName(FileOperator.getRandomValueFromResourceFile("Female_names.txt"));
+    }
+
+    public void setSurameByGender(String gender) throws IOException {
+        if (gender == "М" || gender == "male")
+            this.setSurname(FileOperator.getRandomValueFromResourceFile("Male_surnames.txt"));
+        else
+            this.setSurname(FileOperator.getRandomValueFromResourceFile("Female_surnames.txt"));
+    }
+
+    public void setPatronymicByGender(String gender) throws IOException {
+        if (gender == "М" || gender == "male")
+            this.setPatronymic(FileOperator.getRandomValueFromResourceFile("Male_patronymics.txt"));
+        else
+            this.setPatronymic(FileOperator.getRandomValueFromResourceFile("Female_patronymics.txt"));
+    }
+
+    public Person getPersonByWebApiPerson(PersonFromWebApi personFromWebApi) throws IOException {
+        if (personFromWebApi.getGender() == "male")
+            this.setGender("М");
+        else
+            this.setGender("Ж");
+
+        this.setName(personFromWebApi.getName().getFirst());
+        this.setSurname(personFromWebApi.getName().getLast());
+        this.setPatronymicByGender(this.gender);
+        this.setAge(personFromWebApi.getDob().getAge());
+        this.setDateOfBirth(personFromWebApi.getDob().getDate());
+        this.setInn(new Inn().getRandomInn());
+        this.setPostcode(random.nextInt(100000, 200001));
+        this.setCountry(personFromWebApi.getNat());
+        this.setRegion(personFromWebApi.getLocation().getState());
+        this.setCity(personFromWebApi.getLocation().getCity());
+        this.setStreet(personFromWebApi.getLocation().getStreet());
+        this.setBldNumber(random.nextInt(1, 100));
+        this.setAptNumber(random.nextInt(1, 200));
+
+        return this;
     }
 }

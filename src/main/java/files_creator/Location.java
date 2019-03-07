@@ -1,15 +1,9 @@
 package files_creator;
 
-public class Location {
+public class Location<T> {
     private String state;
     private String city;
     private String street;
-
-    public Location(String state, String city, String street) {
-        this.state = state;
-        this.city = city;
-        this.street = street;
-    }
 
     public String getState() {
         return state;
