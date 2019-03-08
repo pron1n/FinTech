@@ -14,36 +14,31 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class PeopleTableFilesCreator {
     private static Date currentDate = new Date();
-    private static ThreadLocalRandom random = ThreadLocalRandom.current();
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
     private static String excelFilePath = new File("PeopleTable.xlsx").getAbsolutePath();
 
     private static Person getRandomPersonOffline() throws IOException {
         Person person = new Person();
 
-        Date dateOfBirth = new Date(random.nextLong(1000000000000L));
+        Date dateOfBirth = RandomDataGenerator.getDateOfBirth();
 
-        String[] genderVariats = {"М", "Ж"};
-        String gender = genderVariats[random.nextInt(2)];
-        person.setGender(gender);
-
+        person.setGender(RandomDataGenerator.getGender());
         person.setNameByGender(person.getGender());
         person.setSurameByGender(person.getGender());
         person.setPatronymicByGender(person.getGender());
         person.setDateOfBirth(simpleDateFormat.format(dateOfBirth));
         person.setAge(getAgeByDateOfBirth(dateOfBirth));
-        person.setCountry(FileOperator.getRandomValueFromResourceFile("Countries.txt"));
-        person.setRegion(FileOperator.getRandomValueFromResourceFile("Regions.txt"));
-        person.setCity(FileOperator.getRandomValueFromResourceFile("Cities.txt"));
-        person.setStreet(FileOperator.getRandomValueFromResourceFile("Streets.txt"));
-        person.setBldNumber(random.nextInt(1,100));
-        person.setAptNumber(random.nextInt(1, 200));
-        person.setPostcode(random.nextInt(100000, 200001));
-        person.setInn(new Inn().getRandomInn());
+        person.setCountry(RandomDataGenerator.getRandomValueFromResourceFile("Countries.txt"));
+        person.setRegion(RandomDataGenerator.getRandomValueFromResourceFile("Regions.txt"));
+        person.setCity(RandomDataGenerator.getRandomValueFromResourceFile("Cities.txt"));
+        person.setStreet(RandomDataGenerator.getRandomValueFromResourceFile("Streets.txt"));
+        person.setBldNumber(RandomDataGenerator.getBldNumber());
+        person.setAptNumber(RandomDataGenerator.getAptNumber());
+        person.setPostcode(RandomDataGenerator.getPostcode());
+        person.setInn(RandomDataGenerator.getInn());
 
         return person;
     }
@@ -130,13 +125,13 @@ public class PeopleTableFilesCreator {
         sheet.setDefaultColumnWidth(15);
         addExcelTableTitleRow(sheet);
 
-        int numberOfRows = random.nextInt(1, 31);
+        int numberOfRows = RandomDataGenerator.getNumberOfRows();
 
         for (int row = 1; row <= numberOfRows; row++) {
             try {
-                String jsonUser = getRandomUserJsonString();
+                String jsonStringObject = getRandomUserJsonString();
                 Person randomPerson = new Person();
-                randomPerson.getPersonByWebApiUser(getWebApiUser(jsonUser));
+                randomPerson.getPersonByWebApiUser(getWebApiUser(jsonStringObject));
                 addPersonToExcelTableRow(randomPerson, sheet, row);
             } catch (Exception e) {
                 Person randomPerson = getRandomPersonOffline();

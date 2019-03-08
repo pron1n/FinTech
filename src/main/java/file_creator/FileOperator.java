@@ -11,19 +11,5 @@ public class FileOperator {
 
     public static ThreadLocalRandom random = ThreadLocalRandom.current();
 
-    public static String getRandomValueFromResourceFile(String fileName) throws IOException {
-        String randomValue = "";
-        BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/" + fileName));
-        String value;
-        List<String> values = new ArrayList<>();
-        int valueCount = 0;
-        while ((value = br.readLine()) != null) {
-            values.add(value);
-            valueCount++;
-        }
-        int randomIndex = random.nextInt(0, valueCount);
-        randomValue = values.get(randomIndex);
 
-        return randomValue;
-    }
 }

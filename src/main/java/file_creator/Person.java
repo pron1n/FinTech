@@ -28,6 +28,10 @@ public class Person {
         return gender;
     }
 
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
 
     public void setName(String name) {
         this.name = name;
@@ -107,23 +111,23 @@ public class Person {
 
     public void setNameByGender(String gender) throws IOException {
         if (gender.equals("М") || gender.equals("male"))
-            this.setName(FileOperator.getRandomValueFromResourceFile("Male_names.txt"));
+            this.setName(RandomDataGenerator.getRandomValueFromResourceFile("Male_names.txt"));
         else
-            this.setName(FileOperator.getRandomValueFromResourceFile("Female_names.txt"));
+            this.setName(RandomDataGenerator.getRandomValueFromResourceFile("Female_names.txt"));
     }
 
     public void setSurameByGender(String gender) throws IOException {
         if (gender.equals("М") || gender.equals("male"))
-            this.setSurname(FileOperator.getRandomValueFromResourceFile("Male_surnames.txt"));
+            this.setSurname(RandomDataGenerator.getRandomValueFromResourceFile("Male_surnames.txt"));
         else
-            this.setSurname(FileOperator.getRandomValueFromResourceFile("Female_surnames.txt"));
+            this.setSurname(RandomDataGenerator.getRandomValueFromResourceFile("Female_surnames.txt"));
     }
 
     public void setPatronymicByGender(String gender) throws IOException {
         if (gender.equals("М") || gender.equals("male"))
-            this.setPatronymic(FileOperator.getRandomValueFromResourceFile("Male_patronymics.txt"));
+            this.setPatronymic(RandomDataGenerator.getRandomValueFromResourceFile("Male_patronymics.txt"));
         else
-            this.setPatronymic(FileOperator.getRandomValueFromResourceFile("Female_patronymics.txt"));
+            this.setPatronymic(RandomDataGenerator.getRandomValueFromResourceFile("Female_patronymics.txt"));
     }
 
     public Person getPersonByWebApiUser(WebApiUser webApiUser) throws IOException {
@@ -137,14 +141,14 @@ public class Person {
         this.setPatronymicByGender(this.gender);
         this.setAge(webApiUser.getDob().getAge());
         this.setDateOfBirth(webApiUser.getDob().getDate());
-        this.setInn(new Inn().getRandomInn());
-        this.setPostcode(random.nextInt(100000, 200001));
+        this.setInn(RandomDataGenerator.getInn());
+        this.setPostcode(RandomDataGenerator.getPostcode());
         this.setCountry(webApiUser.getNat());
         this.setRegion(webApiUser.getLocation().getState());
         this.setCity(webApiUser.getLocation().getCity());
         this.setStreet(webApiUser.getLocation().getStreet());
-        this.setBldNumber(random.nextInt(1, 100));
-        this.setAptNumber(random.nextInt(1, 200));
+        this.setBldNumber(RandomDataGenerator.getBldNumber());
+        this.setAptNumber(RandomDataGenerator.getAptNumber());
 
         return this;
     }
