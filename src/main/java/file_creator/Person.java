@@ -1,4 +1,6 @@
-package files_creator;
+package file_creator;
+
+import file_creator.web_api_user.WebApiUser;
 
 import java.io.IOException;
 import java.util.ArrayList;

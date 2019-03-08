@@ -1,4 +1,4 @@
-package files_creator;
+package file_creator;
 
 import java.util.concurrent.ThreadLocalRandom;
 

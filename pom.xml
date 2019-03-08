@@ -27,7 +27,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>dependency</classpathPrefix>
-                            <mainClass>files_creator.PeopleTableFilesCreator</mainClass>
+                            <mainClass>file_creator.PeopleTableFilesCreator</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Class-Path>conf/</Class-Path>

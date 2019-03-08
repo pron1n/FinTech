@@ -1,6 +1,7 @@
-package files_creator;
+package file_creator;
 
 import com.google.gson.Gson;
+import file_creator.web_api_user.WebApiUser;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -141,19 +142,12 @@ public class PeopleTableFilesCreator {
                 Person randomPerson = getRandomPersonOffline();
                 addPersonToExcelTableRow(randomPerson, sheet, row);
                 System.out.println("Не удалось получить пользователя от randomuser.me\n" +
-                        "Пользователь в строке " + row + " сгенерен с использованием локальных ресурсов");
+                        "Пользователь в строке " + (row + 1) + " сгенерен с использованием локальных ресурсов");
             }
         }
 
         wb.write(fos);
         fos.close();
-
-
-        String jsonUser = getRandomUserJsonString();
-        System.out.println(jsonUser);
-        System.out.println(new Person().getPersonByWebApiUser(getWebApiUser(jsonUser))
-                .getStringAttributes());
-
 
         System.out.println("Файл создан. Путь: " + excelFilePath);
     }
