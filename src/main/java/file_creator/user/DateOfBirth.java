@@ -1,4 +1,4 @@
-package file_creator.web_api_user;
+package file_creator.user;
 
 public class DateOfBirth {
     private String date;

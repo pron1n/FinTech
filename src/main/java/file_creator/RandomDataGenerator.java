@@ -3,7 +3,6 @@ package file_creator;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomDataGenerator {
     private static ThreadLocalRandom random = ThreadLocalRandom.current();
-    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
     private static String[] genderVariants = {"М", "Ж"};
 
     public static int getNumberOfRows() {
@@ -20,7 +18,6 @@ public class RandomDataGenerator {
 
     public static Date getDateOfBirth() {
         return new Date(random.nextLong(1000000000000L));
-
     }
 
     public static int getPostcode() {
@@ -38,7 +35,6 @@ public class RandomDataGenerator {
     public static String getGender() {
         return genderVariants[random.nextInt(2)];
     }
-
 
     public static String getInn() {
         String inn = "77" + Integer.toString(random.nextInt(10000000, 99999999));
