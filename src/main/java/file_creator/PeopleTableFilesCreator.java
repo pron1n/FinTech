@@ -1,6 +1,7 @@
 package file_creator;
 
 import file_creator.user.DateOfBirth;
+import file_creator.user.Location;
 import file_creator.user.User;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -49,6 +50,7 @@ public class PeopleTableFilesCreator {
                 user.setPatronymicByGender(user.getGender());
                 user.setOneSignGender();
                 user.dob.setDate(DateOfBirth.getDateInDDMMYYYY(DateOfBirth.getDateInYYYYMMDD(user.dob.getDate())));
+                user.setNat(Location.getFullCountryName(user.getNat()));
                 addUserToExcelTableRow(user, sheet, row);
             } catch (Exception e) {
                 user = new User().getRandomUserOffline();
