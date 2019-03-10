@@ -1,6 +1,6 @@
 package file_creator.user;
 
-public class Name extends User {
+public class Name {
     private String first;
     private String last;
     private String patronymic;

@@ -3,15 +3,15 @@ package file_creator.user;
 import file_creator.RandomDataGenerator;
 
 public class Location {
-    private String country;
     private String state;
     private String city;
     private String street;
     private int bldNumber;
     private int aptNumber;
 
-    public String getCountry() {
-        return country;
+    public Location() {
+        this.bldNumber = RandomDataGenerator.getBldNumber();
+        this.aptNumber = RandomDataGenerator.getAptNumber();
     }
 
     public String getState() {
@@ -29,6 +29,7 @@ public class Location {
     public int getBldNumber() {
         return bldNumber;
     }
+
     public int getAptNumber() {
         return aptNumber;
     }
@@ -43,17 +44,5 @@ public class Location {
 
     public void setStreet(String street) {
         this.street = street;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public void setBldNumber(int bldNumber) {
-        this.bldNumber = RandomDataGenerator.getBldNumber();
-    }
-
-    public void setAptNumber(int aptNumber) {
-        this.aptNumber = RandomDataGenerator.getAptNumber();
     }
 }

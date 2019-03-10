@@ -3,61 +3,54 @@ package file_creator.user;
 import file_creator.RandomDataGenerator;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class User {
     private String gender;
-    public Name name;
+    private Name name;
     public Location location;
     public DateOfBirth dob;
-    private String nat;
     private String inn;
     private int postcode;
+    private String nat;
 
-    public String getGender() {
-        return gender;
-    }
-
-    public Name getName() {
-        return name;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public DateOfBirth getDob() {
-        return dob;
+    public void setNat(String nat) {
+        this.nat = nat;
     }
 
     public String getNat() {
         return nat;
     }
 
-    public String getInn() {
-        return inn;
+    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private static Date currentDate = new Date();
+
+    public User() throws IOException {
+        this.name = new Name();
+        this.location = new Location();
+        this.dob = new DateOfBirth();
+        this.inn = RandomDataGenerator.getInn();
+        this.postcode = RandomDataGenerator.getPostcode();
     }
 
-    public int getPostcode() {
-        return postcode;
+    public String getGender() {
+        return gender;
     }
 
     public void setGender(String gender) {
         this.gender = gender;
     }
 
-    public void setName(Name name) {
-        this.name = name;
-    }
-
-    public void setNameByGender(String gender) throws IOException {
+    public void setFirstNameByGender(String gender) throws IOException {
         if (gender.equals("М") || gender.equals("male"))
             this.name.setFirst(RandomDataGenerator.getRandomValueFromResourceFile("Male_names.txt"));
         else
             this.name.setFirst(RandomDataGenerator.getRandomValueFromResourceFile("Female_names.txt"));
     }
 
-    public void setSurnameByGender(String gender) throws IOException {
+    public void setLastNameByGender(String gender) throws IOException {
         if (gender.equals("М") || gender.equals("male"))
             this.name.setLast(RandomDataGenerator.getRandomValueFromResourceFile("Male_surnames.txt"));
         else
@@ -71,20 +64,52 @@ public class User {
             this.name.setPatronymic(RandomDataGenerator.getRandomValueFromResourceFile("Female_patronymics.txt"));
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    private static int getAgeByDateOfBirth(Date dateOfBirth) {
+        int currentYear = currentDate.getYear() + 1900;
+        int currentMonth = currentDate.getMonth() + 1;
+        int currentDay = currentDate.getDate();
+        int birthYear = dateOfBirth.getYear() + 1900;
+        int birthMonth = dateOfBirth.getMonth() + 1;
+        int birthDay = dateOfBirth.getDate();
+
+        int age  = 0;
+
+        if (currentMonth > birthMonth) {
+            age = currentYear - birthYear;
+            return age;
+        }
+        else if (currentMonth < birthMonth) {
+            age = currentYear - birthYear - 1;
+            return age;
+        }
+        else {
+            if (currentDay >= birthDay) {
+                age = currentYear - birthYear;
+                return age;
+            }
+            else {
+                age = currentYear - birthYear - 1;
+                return age;
+            }
+        }
     }
 
-    public void setDob(DateOfBirth dob) {
-        this.dob = dob;
-    }
+    public User getRandomUserOffline() throws IOException {
 
-    public void setInn(String inn) {
-        this.inn = RandomDataGenerator.getInn();
-    }
+        Date dateOfBirth = RandomDataGenerator.getDateOfBirth();
 
-    public void setPostcode(int postcode) {
-        this.postcode = RandomDataGenerator.getPostcode();
+        this.setGender(RandomDataGenerator.getGender());
+        this.setFirstNameByGender(this.getGender());
+        this.setLastNameByGender(this.getGender());
+        this.setPatronymicByGender(this.getGender());
+        this.dob.setDate(simpleDateFormat.format(dateOfBirth));
+        this.dob.setAge(getAgeByDateOfBirth(dateOfBirth));
+        this.setNat(RandomDataGenerator.getRandomValueFromResourceFile("Countries.txt"));
+        this.location.setState(RandomDataGenerator.getRandomValueFromResourceFile("Regions.txt"));
+        this.location.setCity(RandomDataGenerator.getRandomValueFromResourceFile("Cities.txt"));
+        this.location.setStreet(RandomDataGenerator.getRandomValueFromResourceFile("Streets.txt"));
+
+        return this;
     }
 
     public ArrayList<String> getStringAttributes() {
@@ -98,7 +123,7 @@ public class User {
         personAttributes.add(this.dob.getDate());
         personAttributes.add(inn);
         personAttributes.add(Integer.toString(postcode));
-        personAttributes.add(this.location.getCountry());
+        personAttributes.add(this.getNat());
         personAttributes.add(this.location.getState());
         personAttributes.add(this.location.getCity());
         personAttributes.add(this.location.getStreet());

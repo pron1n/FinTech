@@ -1,84 +1,16 @@
 package file_creator;
 
-import com.google.gson.Gson;
-import file_creator.user.DateOfBirth;
-import file_creator.user.Location;
-import file_creator.user.Name;
 import file_creator.user.User;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class PeopleTableFilesCreator {
-    private static Date currentDate = new Date();
-    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
     private static String excelFilePath = new File("PeopleTable.xlsx").getAbsolutePath();
-
-    private static User getRandomUserOffline() throws IOException {
-        User user = new User();
-
-        Date dateOfBirth = RandomDataGenerator.getDateOfBirth();
-
-        user.setName(new Name());
-        user.setLocation(new Location());
-        user.setDob(new DateOfBirth());
-
-        user.setGender(RandomDataGenerator.getGender());
-        user.setNameByGender(user.getGender());
-        user.setSurnameByGender(user.getGender());
-        user.setPatronymicByGender(user.getGender());
-        user.dob.setDate(simpleDateFormat.format(dateOfBirth));
-        user.dob.setAge(getAgeByDateOfBirth(dateOfBirth));
-        user.location.setCountry(RandomDataGenerator.getRandomValueFromResourceFile("Countries.txt"));
-        user.location.setState(RandomDataGenerator.getRandomValueFromResourceFile("Regions.txt"));
-        user.location.setCity(RandomDataGenerator.getRandomValueFromResourceFile("Cities.txt"));
-        user.location.setStreet(RandomDataGenerator.getRandomValueFromResourceFile("Streets.txt"));
-        user.location.setBldNumber(RandomDataGenerator.getBldNumber());
-        user.location.setAptNumber(RandomDataGenerator.getAptNumber());
-        user.setPostcode(RandomDataGenerator.getPostcode());
-        user.setInn(RandomDataGenerator.getInn());
-
-        return user;
-    }
-
-    private static int getAgeByDateOfBirth(Date dateOfBirth) {
-        int currentYear = currentDate.getYear() + 1900;
-        int currentMonth = currentDate.getMonth() + 1;
-        int currentDay = currentDate.getDate();
-        int birthYear = dateOfBirth.getYear() + 1900;
-        int birthMonth = dateOfBirth.getMonth() + 1;
-        int birthDay = dateOfBirth.getDate();
-
-        int age  = 0;
-
-        if (currentMonth > birthMonth) {
-            age = currentYear - birthYear;
-            return age;
-        }
-        else if (currentMonth < birthMonth) {
-            age = currentYear - birthYear - 1;
-            return age;
-        }
-        else {
-            if (currentDay >= birthDay) {
-                age = currentYear - birthYear;
-                return age;
-            }
-            else {
-                age = currentYear - birthYear - 1;
-                return age;
-            }
-        }
-    }
 
     private static void addExcelTableTitleRow(XSSFSheet sheet) {
         XSSFRow titleRow = sheet.createRow(0);
@@ -90,37 +22,12 @@ public class PeopleTableFilesCreator {
         }
     }
 
-    private static void addPersonToExcelTableRow(User user, XSSFSheet sheet, int rowNum) {
-        XSSFRow personRow = sheet.createRow(rowNum);
+    private static void addUserToExcelTableRow(User user, XSSFSheet sheet, int rowNum) {
+        XSSFRow userRow = sheet.createRow(rowNum);
         ArrayList<String> personAttributes = user.getStringAttributes();
         for (int fieldNum = 0; fieldNum < personAttributes.size(); fieldNum++) {
-            XSSFCell nextCell = personRow.createCell(fieldNum);
+            XSSFCell nextCell = userRow.createCell(fieldNum);
             nextCell.setCellValue(personAttributes.get(fieldNum));
-        }
-    }
-
-    private static String getUserDataJsonString() throws IOException {
-        OkHttpClient okHttpClient = new OkHttpClient();
-
-        Request request = new Request.Builder()
-                .url("https://randomuser.me/api/?inc=gender,name,location,dob,nat")
-                .get()
-                .build();
-
-        try (Response response = okHttpClient.newCall(request).execute()) {
-            return response.body().string();
-        }
-    }
-
-    private static User getUserDataFromWebApi(String jsonUser) {
-        Gson gson = new Gson();
-        try
-        {
-            User user = gson.fromJson(jsonUser
-                .substring(jsonUser.indexOf("[") + 1, jsonUser.indexOf("]")), User.class);
-            return user;
-        } catch (Exception e) {
-            return null;
         }
     }
 
@@ -134,13 +41,22 @@ public class PeopleTableFilesCreator {
         int numberOfRows = RandomDataGenerator.getNumberOfRows();
 
         for (int row = 1; row <= numberOfRows; row++) {
+            User user;
             try {
-                String jsonStringObject = getUserDataJsonString();
-                User randomPerson = getUserDataFromWebApi(jsonStringObject);
-                addPersonToExcelTableRow(randomPerson, sheet, row);
+                String jsonStringObject = OnlineFlowOperator.getUserDataJsonString();
+                user = OnlineFlowOperator.getUserDataFromWebApi(jsonStringObject);
+                user.setPatronymicByGender(user.getGender());
+                user.dob.setDate(user.dob.getDate().substring(0, 10));
+                switch (user.getGender()) {
+                    case "male": user.setGender("М");
+                        break;
+                    case "female": user.setGender("Ж");
+                        break;
+                }
+                addUserToExcelTableRow(user, sheet, row);
             } catch (Exception e) {
-                User randomPerson = getRandomUserOffline();
-                addPersonToExcelTableRow(randomPerson, sheet, row);
+                user = new User().getRandomUserOffline();
+                addUserToExcelTableRow(user, sheet, row);
                 System.out.println("Не удалось получить пользователя от randomuser.me\n" +
                         "Пользователь в строке " + (row + 1) + " сгенерен с использованием локальных ресурсов");
             }
