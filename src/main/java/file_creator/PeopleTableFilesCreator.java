@@ -1,5 +1,6 @@
 package file_creator;
 
+import file_creator.user.DateOfBirth;
 import file_creator.user.User;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -46,13 +47,8 @@ public class PeopleTableFilesCreator {
                 String jsonStringObject = OnlineFlowOperator.getUserDataJsonString();
                 user = OnlineFlowOperator.getUserDataFromWebApi(jsonStringObject);
                 user.setPatronymicByGender(user.getGender());
-                user.dob.setDate(user.dob.getDate().substring(0, 10));
-                switch (user.getGender()) {
-                    case "male": user.setGender("М");
-                        break;
-                    case "female": user.setGender("Ж");
-                        break;
-                }
+                user.setOneSignGender();
+                user.dob.setDate(DateOfBirth.getDateInDDMMYYYY(DateOfBirth.getDateInYYYYMMDD(user.dob.getDate())));
                 addUserToExcelTableRow(user, sheet, row);
             } catch (Exception e) {
                 user = new User().getRandomUserOffline();

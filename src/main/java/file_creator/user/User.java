@@ -25,9 +25,9 @@ public class User {
     }
 
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    private static Date currentDate = new Date();
 
-    public User() throws IOException {
+
+    public User() {
         this.name = new Name();
         this.location = new Location();
         this.dob = new DateOfBirth();
@@ -64,33 +64,12 @@ public class User {
             this.name.setPatronymic(RandomDataGenerator.getRandomValueFromResourceFile("Female_patronymics.txt"));
     }
 
-    private static int getAgeByDateOfBirth(Date dateOfBirth) {
-        int currentYear = currentDate.getYear() + 1900;
-        int currentMonth = currentDate.getMonth() + 1;
-        int currentDay = currentDate.getDate();
-        int birthYear = dateOfBirth.getYear() + 1900;
-        int birthMonth = dateOfBirth.getMonth() + 1;
-        int birthDay = dateOfBirth.getDate();
-
-        int age  = 0;
-
-        if (currentMonth > birthMonth) {
-            age = currentYear - birthYear;
-            return age;
-        }
-        else if (currentMonth < birthMonth) {
-            age = currentYear - birthYear - 1;
-            return age;
-        }
-        else {
-            if (currentDay >= birthDay) {
-                age = currentYear - birthYear;
-                return age;
-            }
-            else {
-                age = currentYear - birthYear - 1;
-                return age;
-            }
+    public void setOneSignGender() {
+        switch (this.getGender()) {
+            case "male": this.setGender("М");
+                break;
+            case "female": this.setGender("Ж");
+                break;
         }
     }
 
@@ -103,7 +82,7 @@ public class User {
         this.setLastNameByGender(this.getGender());
         this.setPatronymicByGender(this.getGender());
         this.dob.setDate(simpleDateFormat.format(dateOfBirth));
-        this.dob.setAge(getAgeByDateOfBirth(dateOfBirth));
+        this.dob.setAge(DateOfBirth.getAgeByDateOfBirth(dateOfBirth));
         this.setNat(RandomDataGenerator.getRandomValueFromResourceFile("Countries.txt"));
         this.location.setState(RandomDataGenerator.getRandomValueFromResourceFile("Regions.txt"));
         this.location.setCity(RandomDataGenerator.getRandomValueFromResourceFile("Cities.txt"));
