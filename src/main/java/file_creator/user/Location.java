@@ -11,6 +11,19 @@ public class Location {
     private String street;
     private int bldNumber;
     private int aptNumber;
+
+    public void setBldNumber(int bldNumber) {
+        this.bldNumber = bldNumber;
+    }
+
+    public void setAptNumber(int aptNumber) {
+        this.aptNumber = aptNumber;
+    }
+
+    public static void setCountries(Map countries) {
+        Location.countries = countries;
+    }
+
     private static Map countries = new HashMap<String, String>() {{
         put("AU", "Australia");
         put("BR", "Brazil");

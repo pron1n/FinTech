@@ -19,7 +19,16 @@ public class User {
 
     private String inn;
 
+    public void setInn(String inn) {
+        this.inn = inn;
+    }
+
+    public void setPostcode(int postcode) {
+        this.postcode = postcode;
+    }
+
     public int getPostcode() {
+
         return postcode;
     }
 

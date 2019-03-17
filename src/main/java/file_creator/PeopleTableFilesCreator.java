@@ -43,6 +43,9 @@ public class PeopleTableFilesCreator {
 
         int numberOfRows = RandomDataGenerator.getNumberOfRows();
 
+        DBOperator dbOperator = new DBOperator();
+        Connection conn = dbOperator.getConnectionToDB();
+
         for (int row = 1; row <= numberOfRows; row++) {
             User user;
             try {
@@ -53,23 +56,27 @@ public class PeopleTableFilesCreator {
                 user.dob.setDate(DateOfBirth.getDateInDDMMYYYY(DateOfBirth.getDateInYYYYMMDD(user.dob.getDate())));
                 user.setNat(Location.getFullCountryName(user.getNat()));
                 addUserToExcelTableRow(user, sheet, row);
+
+                int userId = dbOperator.getUserIdInDB(conn, user);
+                if (userId == 0)
+                    dbOperator.insertUserIntoDB(conn, user);
+                else
+                    dbOperator.updateUserInfo(conn, user);
+
             } catch (Exception e) {
-                user = new User().getRandomUserOffline();
-                addUserToExcelTableRow(user, sheet, row);
-                System.out.println("Не удалось получить пользователя от randomuser.me\n" +
-                        "Пользователь в строке " + (row + 1) + " сгенерен с использованием локальных ресурсов");
+                int numberOfUsersInDb = dbOperator.getNumberOfUsersInDB(conn);
+                if (numberOfUsersInDb >= numberOfRows) {
+                    user = dbOperator.getRandomUserFromDB(conn);
+                    addUserToExcelTableRow(user, sheet, row);
+                }
+                else {
+                    user = new User().getRandomUserOffline();
+                    addUserToExcelTableRow(user, sheet, row);
+                    System.out.println("Не удалось получить пользователя ни от randomuser.me, ни из БД\n" +
+                            "Пользователь в строке " + (row + 1) + " сгенерен с использованием локальных ресурсов");
+                }
             }
         }
-
-
-        DBOperator dbOperator = new DBOperator();
-        Connection conn = dbOperator.getConnectionToDB();
-
-        User user = new User().getRandomUserOffline();
-        dbOperator.insertUserIntoDB(conn, user);
-
-        Statement stmt = conn.createStatement();
-        System.out.println(stmt.execute("select id from persons where surname ='Тортельyе'"));
 
         conn.close();
 
