@@ -32,4 +32,4 @@ hs_err_pid*
 *.xlsx
 *.pdf
 
-DBConnection_parameters.dat
+./src/main/resources/DBConnection_parameters.dat
