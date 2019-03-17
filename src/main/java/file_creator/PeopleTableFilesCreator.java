@@ -9,6 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class PeopleTableFilesCreator {
@@ -33,7 +34,7 @@ public class PeopleTableFilesCreator {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
         XSSFWorkbook wb = new XSSFWorkbook();
         FileOutputStream fos = new FileOutputStream("PeopleTable.xlsx");
         XSSFSheet sheet = wb.createSheet("People");
@@ -59,6 +60,22 @@ public class PeopleTableFilesCreator {
                         "Пользователь в строке " + (row + 1) + " сгенерен с использованием локальных ресурсов");
             }
         }
+
+
+        DBOperator dbOperator = new DBOperator();
+        Connection conn = dbOperator.getConnectionToDB();
+//        ResultSet rs = dbOperator.getResultSet(conn, "select count(*) + 1 from address");
+//        rs.next();
+//        System.out.println(rs.getInt(1));
+//        rs.close();
+
+        User user = new User().getRandomUserOffline();
+        dbOperator.insertUserIntoDB(conn, user);
+
+
+        conn.close();
+
+
 
         wb.write(fos);
         fos.close();

@@ -9,10 +9,20 @@ import java.util.Date;
 
 public class User {
     private String gender;
-    private Name name;
+    public Name name;
     public Location location;
     public DateOfBirth dob;
+
+    public String getInn() {
+        return inn;
+    }
+
     private String inn;
+
+    public int getPostcode() {
+        return postcode;
+    }
+
     private int postcode;
     private String nat;
 
