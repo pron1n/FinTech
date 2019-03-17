@@ -64,18 +64,14 @@ public class PeopleTableFilesCreator {
 
         DBOperator dbOperator = new DBOperator();
         Connection conn = dbOperator.getConnectionToDB();
-//        ResultSet rs = dbOperator.getResultSet(conn, "select count(*) + 1 from address");
-//        rs.next();
-//        System.out.println(rs.getInt(1));
-//        rs.close();
 
         User user = new User().getRandomUserOffline();
         dbOperator.insertUserIntoDB(conn, user);
 
+        Statement stmt = conn.createStatement();
+        System.out.println(stmt.execute("select id from persons where surname ='Тортельyе'"));
 
         conn.close();
-
-
 
         wb.write(fos);
         fos.close();
